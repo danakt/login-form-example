@@ -1,0 +1,48 @@
+:root {
+  --white: 255, 255, 255;
+
+  /* https://coolors.co/0c090d-e01a4f-f15946-f9c22e-53b3cb */
+  --rich-black-fogra-39: 12, 9, 13;
+  --ua-red: 224, 26, 79;
+  --fire-opal: 241, 89, 70;
+  --orange-yellow: 249, 194, 46;
+  --maximum-blue: 83, 179, 203;
+
+  --gradient-logo: linear-gradient(45deg, rgb(var(--orange-yellow)), rgb(var(--ua-red)));
+
+  --color-warn: rgb(var(--fire-opal));
+  --color-success: rgb(var(--maximum-blue));
+
+  --color-text-primary: rgb(var(--rich-black-fogra-39));
+  --color-text-secondary: rgba(var(--rich-black-fogra-39), 0.5);
+  --color-text-highlight: rgb(var(--fire-opal));
+
+  --color-link: rgb(var(--fire-opal));
+  --color-link-focus-outline: rgb(var(--orange-yellow));
+
+  --color-input-background: rgba(var(--rich-black-fogra-39), 0.05);
+  --color-input-focus-border: rgb(var(--orange-yellow));
+  --color-input-focus-border-outline: rgba(var(--orange-yellow), 0.15);
+  --color-input-error-border: rgb(var(--fire-opal));
+  --color-input-error-focus-border-outline: rgba(var(--fire-opal), 0.15);
+  --color-input-icon-hover-background: rgba(var(--rich-black-fogra-39), 0.05);
+
+  --color-button-primary: rgb(var(--fire-opal));
+  --color-button-primary-shadow: rgba(var(--fire-opal), 0.4);
+  --color-button-primary-focus-border: rgba(var(--rich-black-fogra-39), 0.7);
+  --color-button-primary-focus-border-outline: rgba(var(--fire-opal), 0.15);
+  --color-button-primary-text: rgb(var(--white));
+
+  --color-button-secondary: rgba(var(--rich-black-fogra-39), 0.05);
+  --color-button-secondary-focus-border: rgb(var(--orange-yellow));
+  --color-button-secondary-text: rgb(var(--rich-black-fogra-39));
+
+  --color-button-disabled: rgba(var(--rich-black-fogra-39), 0.05);
+  --color-button-disabled-text: rgba(var(--rich-black-fogra-39), 0.3);
+
+  --color-checkbox-background: rgba(var(--rich-black-fogra-39), 0.05);
+  --color-checkbox-checked-background: rgb(var(--fire-opal));
+  --color-checkbox-focus-border: rgb(var(--orange-yellow));
+  --color-checkbox-checked-focus-border: rgba(var(--rich-black-fogra-39), 0.7);
+  --color-checkbox-icon: rgb(var(--white));
+}
