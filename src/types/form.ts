@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { JoinObjectsIntersection, UnionToIntersection } from './utils';
 
 export type InputValidator = {
   validate: (value: string) => boolean;
@@ -58,3 +59,13 @@ export type FormItem<Name> =
   | FormItemSubmit;
 
 export type FormLayout<Name> = (FormItem<Name> | [FormItem<Name>, FormItem<Name>])[];
+
+export type FormData<Layout extends FormLayout<string>, FlatLayout = FlatArray<Layout, 1>> = JoinObjectsIntersection<
+  UnionToIntersection<
+    FlatLayout extends { name: infer Name; type: infer Type }
+      ? Name extends PropertyKey
+        ? { [K in Name]: Type extends 'checkbox' ? boolean : string }
+        : never
+      : never
+  >
+>;

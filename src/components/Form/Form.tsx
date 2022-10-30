@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { FormItem, FormLayout } from '../../types/form';
+import { FormItem, FormLayout, FormData } from '../../types/form';
 import { validateField } from '../../utils/validateField';
 import { validatorPasswordConfirmation, validatorRequiredField } from '../../utils/validators';
 import { Button } from '../Button/Button';
@@ -8,11 +8,12 @@ import { Input } from '../Input/Input';
 import { InputPassword } from '../InputPassword/InputPassword';
 import styles from './styles.css';
 
-type Props<Name extends string> = {
-  itemsLayout: FormLayout<Name>;
+type Props<Layout extends FormLayout<string>> = {
+  itemsLayout: Layout;
+  onSubmit?: (formData: FormData<Layout>) => void;
 };
 
-export const Form = function <Name extends string>(props: Props<Name>) {
+export const Form = function <Name extends string, Layout extends FormLayout<Name>>(props: Props<Layout>) {
   // Checking for items duplicates
   useEffect(() => {
     const names: Name[] = [];
@@ -23,7 +24,7 @@ export const Form = function <Name extends string>(props: Props<Name>) {
       }
 
       if (names.includes(item.name)) {
-        throw new Error('Duplicate names in form items');
+        throw new Error(`Duplicate names in form items: "${item.name}"`);
       }
 
       names.push(item.name);
@@ -48,7 +49,7 @@ export const Form = function <Name extends string>(props: Props<Name>) {
         ...acc,
         [item.name]: 'defaultValue' in item ? item.defaultValue : '',
       };
-    }, {} as Record<Name, string | boolean>);
+    }, {} as FormData<Layout>);
   });
 
   // Validation results
@@ -98,7 +99,9 @@ export const Form = function <Name extends string>(props: Props<Name>) {
   }, [props.itemsLayout, validationState]);
 
   const handleSubmit = () => {
-    //
+    if (props.onSubmit) {
+      props.onSubmit(formState);
+    }
   };
 
   const resolveFormItem = (item: FormItem<Name>) => {

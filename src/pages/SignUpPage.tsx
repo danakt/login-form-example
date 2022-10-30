@@ -81,6 +81,9 @@ export const SignUpPage = () => {
             },
           ],
         ]}
+        onSubmit={(data) => {
+          console.log(data);
+        }}
       />
     </PageLayout>
   );
