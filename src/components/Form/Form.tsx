@@ -210,6 +210,10 @@ export const Form = function <Name extends string, Layout extends FormLayout<Nam
         );
       }
 
+      case 'gap': {
+        return <div className={styles.gap} />;
+      }
+
       default: {
         return null;
       }

@@ -57,6 +57,9 @@ export const SignUpPage = () => {
             isRequired: true,
           },
           {
+            type: 'gap',
+          },
+          {
             type: 'checkbox',
             name: 'policy',
             text: (
@@ -65,6 +68,9 @@ export const SignUpPage = () => {
               </Text>
             ),
             isRequired: true,
+          },
+          {
+            type: 'gap',
           },
           [
             {

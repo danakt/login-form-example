@@ -8,6 +8,11 @@
   grid-template-rows: [header] 30px [main] 1fr [footer] auto;
   gap: 30px 0px;
   justify-items: stretch;
+
+  @media (min-width: 576px) {
+    max-width: 576px;
+    margin: 0 auto;
+  }
 }
 
 .logoWrapper {

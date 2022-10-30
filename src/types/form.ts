@@ -50,13 +50,18 @@ export type FormItemSubmit = {
   text: ReactNode;
 };
 
+export type FormItemGap = {
+  type: 'gap';
+};
+
 export type FormItem<Name> =
   | FormItemInput<Name>
   | FormItemPassword<Name>
   | FormItemPasswordConfirmation<Name, Name>
   | FormItemCheckbox<Name>
   | FormItemButton
-  | FormItemSubmit;
+  | FormItemSubmit
+  | FormItemGap;
 
 export type FormLayout<Name> = (FormItem<Name> | [FormItem<Name>, FormItem<Name>])[];
 
