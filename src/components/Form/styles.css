@@ -1,0 +1,16 @@
+.formLayout {
+  margin: 40px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 15px;
+}
+
+.partialWidth {
+  @media (max-width: 500px) {
+    grid-column: 1 / 3;
+  }
+}
+
+.fullWidth {
+  grid-column: 1 / 3;
+}
