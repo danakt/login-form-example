@@ -1,0 +1,7 @@
+.showPasswordIcon {
+  transition: var(--transition);
+
+  &.shown {
+    color: var(--color-warn);
+  }
+}
