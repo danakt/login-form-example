@@ -1,0 +1,56 @@
+.layout {
+  min-height: 100%;
+  padding: 20px 25px;
+  display: grid;
+  grid-auto-flow: column dense;
+  grid-auto-columns: 1fr;
+  grid-auto-rows: 1fr;
+  grid-template-rows: [header] 30px [main] 1fr [footer] auto;
+  gap: 30px 0px;
+  justify-items: stretch;
+}
+
+.logoWrapper {
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+}
+
+.logoImage {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  background: var(--gradient-logo);
+  border-radius: 10px;
+}
+
+.logoCompanyName {
+  padding-left: 10px;
+}
+
+.header {
+  grid-row-start: header;
+}
+
+.main {
+  grid-row-start: main;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.footer {
+  grid-row-start: footer;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.copyleft {
+  display: inline-block;
+  transform: scaleX(-1);
+}
+
+.copyleft::before {
+  content: '©';
+}
