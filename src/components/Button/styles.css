@@ -16,7 +16,7 @@
     outline: 0;
   }
 
-  &.disabled {
+  &[disabled] {
     background-color: var(--color-button-disabled);
     color: var(--color-button-disabled-text);
   }
