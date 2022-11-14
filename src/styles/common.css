@@ -18,6 +18,7 @@ body {
   font-size: 14px;
   color: var(--color-text-primary);
   font-weight: 300;
+  background-color: var(--color-page-background);
 }
 
 :global(#root) {

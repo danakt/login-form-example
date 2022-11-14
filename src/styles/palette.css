@@ -10,6 +10,8 @@
 
   --gradient-logo: linear-gradient(45deg, rgb(var(--orange-yellow)), rgb(var(--ua-red)));
 
+  --color-page-background: rgb(var(--white));
+
   --color-warn: rgb(var(--fire-opal));
   --color-success: rgb(var(--maximum-blue));
 
@@ -45,4 +47,26 @@
   --color-checkbox-focus-border: rgb(var(--orange-yellow));
   --color-checkbox-checked-focus-border: rgba(var(--rich-black-fogra-39), 0.7);
   --color-checkbox-icon: rgb(var(--white));
+
+  @media (prefers-color-scheme: dark) {
+    --color-page-background: rgb(var(--rich-black-fogra-39));
+
+    --color-text-primary: rgb(var(--white));
+    --color-text-secondary: rgba(var(--white), 0.5);
+
+    --color-input-background: rgba(var(--white), 0.1);
+    --color-input-icon-hover-background: rgba(var(--white), 0.1);
+
+    --color-button-primary-focus-border: rgb(var(--orange-yellow));
+    --color-button-primary-shadow: rgba(var(--fire-opal), 0.3);
+
+    --color-button-secondary: rgba(var(--white), 0.1);
+    --color-button-secondary-text: rgb(var(--white));
+
+    --color-button-disabled: rgba(var(--white), 0.05);
+    --color-button-disabled-text: rgba(var(--white), 0.3);
+
+    --color-checkbox-background: rgba(var(--white), 0.1);
+    --color-checkbox-checked-focus-border: rgb(var(--orange-yellow));
+  }
 }
