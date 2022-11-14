@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode } from 'react';
 import styles from './styles.css';
 import { BsCheckLg } from 'react-icons/bs';
 

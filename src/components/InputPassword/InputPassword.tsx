@@ -30,12 +30,13 @@ export const InputPassword = (props: Props) => {
       isValid={props.isValid}
       errorMessage={props.errorMessage}
       isValidationResultShown={props.isValidationResultShown}
+      iconButtonLabel={isPasswordShown ? 'Hide password' : 'Show password'}
       icon={
         <div className={classNames(styles.showPasswordIcon, { [styles.shown]: isPasswordShown })}>
           {isPasswordShown ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
         </div>
       }
-      onIconClick={() => setPasswordShown(!isPasswordShown)}
+      onIconButtonClick={() => setPasswordShown(!isPasswordShown)}
       onBlur={props.onBlur}
     />
   );

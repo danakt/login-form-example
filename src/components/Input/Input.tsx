@@ -14,9 +14,10 @@ type Props = {
   isValid?: boolean;
   errorMessage?: string;
   isValidationResultShown?: boolean;
+  iconButtonLabel?: string;
   onChange: (value: string, isFocused: boolean) => void;
   onBlur?: () => void;
-  onIconClick?: () => void;
+  onIconButtonClick?: () => void;
 };
 
 export const Input = (props: Props) => {
@@ -83,8 +84,13 @@ export const Input = (props: Props) => {
 
       {props.icon && (
         <div className={styles.inputIcon}>
-          {props.onIconClick ? (
-            <button className={styles.inputIconButton} onClick={props.onIconClick}>
+          {props.onIconButtonClick ? (
+            <button
+              className={styles.inputIconButton}
+              onClick={props.onIconButtonClick}
+              aria-label={props.iconButtonLabel}
+              title={props.iconButtonLabel}
+            >
               {props.icon}
             </button>
           ) : (
