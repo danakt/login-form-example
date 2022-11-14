@@ -1,10 +1,6 @@
 import { ReactNode } from 'react';
+import { InputValidator } from '../utils/validateField';
 import { JoinObjectsIntersection, UnionToIntersection } from './utils';
-
-export type InputValidator = {
-  validate: (value: string) => boolean;
-  errorMessage: string;
-};
 
 export type FormItemInput<Name> = {
   type: 'text';
@@ -19,6 +15,7 @@ export type FormItemPassword<Name> = {
   type: 'password';
   name: Name;
   label: string;
+  validators?: InputValidator[];
   isRequired?: boolean;
 };
 
@@ -27,6 +24,7 @@ export type FormItemPasswordConfirmation<Name, For> = {
   for: For;
   name: Name;
   label: string;
+  validators?: InputValidator[];
   isRequired?: boolean;
 };
 
@@ -65,6 +63,9 @@ export type FormItem<Name> =
 
 export type FormLayout<Name> = (FormItem<Name> | [FormItem<Name>, FormItem<Name>])[];
 
+/**
+ * Converts form layout array type into form data type
+ */
 export type FormData<Layout extends FormLayout<string>, FlatLayout = FlatArray<Layout, 1>> = JoinObjectsIntersection<
   UnionToIntersection<
     FlatLayout extends { name: infer Name; type: infer Type }

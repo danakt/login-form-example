@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AiFillGithub } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 import { PageDescription } from '../components/PageDescription/PageDescription';
@@ -12,13 +12,14 @@ export const SignUpPage = () => {
   return (
     <PageLayout>
       <PageDescription>Nice to meet you</PageDescription>
-      <PageHeader>Sign Up</PageHeader>
+      <PageHeader>Sign up</PageHeader>
 
       <Text type="secondary">
         Already have an account? <Link to="/login">Sign in</Link>
       </Text>
 
       <Form
+        isValidationOnChangeEnabled
         itemsLayout={[
           [
             {
@@ -53,7 +54,7 @@ export const SignUpPage = () => {
             type: 'password-confirmation',
             for: 'password',
             name: 'password-confirmation',
-            label: 'Password',
+            label: 'Password confirmation',
             isRequired: true,
           },
           {
@@ -88,7 +89,11 @@ export const SignUpPage = () => {
           ],
         ]}
         onSubmit={(data) => {
-          console.log(data);
+          console.log({
+            ...data,
+            password: data.password.replace(/./g, '*'),
+            'password-confirmation': data['password-confirmation'].replace(/./g, '*'),
+          });
         }}
       />
     </PageLayout>

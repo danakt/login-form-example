@@ -49,6 +49,7 @@
   grid-row-start: footer;
   font-size: 14px;
   color: var(--color-text-secondary);
+  text-align: center;
 }
 
 .copyleft {

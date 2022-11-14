@@ -1,15 +1,29 @@
-import { InputValidator } from '../types/form';
+export type InputValidator = {
+  validate: (value: string) => boolean;
+  errorMessage: string;
+};
 
-export const validateField = (value: string, validators: InputValidator[]): string | null => {
+export type FieldValidationResult = {
+  isValid?: boolean;
+  errorMessage?: string;
+};
+
+export const validateFieldValue = (value: string, validators: InputValidator[]): FieldValidationResult => {
   if (validators) {
     for (let i in validators) {
       const { validate, errorMessage } = validators[i];
 
       if (!validate(value)) {
-        return errorMessage;
+        return {
+          isValid: false,
+          errorMessage,
+        };
       }
     }
   }
 
-  return null;
+  return {
+    isValid: true,
+    errorMessage: undefined,
+  };
 };

@@ -1,11 +1,11 @@
 import classNames from 'classnames';
-import React, { ChangeEventHandler, HTMLInputTypeAttribute, ReactNode, useEffect, useState } from 'react';
+import React, { ChangeEventHandler, HTMLInputTypeAttribute, ReactNode, useState } from 'react';
 import { AiOutlineCheck } from 'react-icons/ai';
-import { InputValidator } from '../../types/form';
 import styles from './styles.css';
 
 type Props = {
   type?: HTMLInputTypeAttribute;
+  name: string;
   value: string;
   label: string;
   isDefaultFocused?: boolean;
@@ -13,7 +13,8 @@ type Props = {
   icon?: ReactNode;
   isValid?: boolean;
   errorMessage?: string;
-  onChange: (value: string) => void;
+  isValidationResultShown?: boolean;
+  onChange: (value: string, isFocused: boolean) => void;
   onBlur?: () => void;
   onIconClick?: () => void;
 };
@@ -22,14 +23,11 @@ export const Input = (props: Props) => {
   const type = props.type ?? 'text';
 
   const [isFocused, setFocused] = useState(props.isDefaultFocused ?? false);
-  const [isValidationResultShown, setValidationResultShown] = useState(false);
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    setValidationResultShown(!isFocused);
-
     if (typeof props.onChange === 'function') {
       const value = event.target.value;
-      props.onChange(value);
+      props.onChange(value, isFocused);
     }
   };
 
@@ -43,22 +41,25 @@ export const Input = (props: Props) => {
     }
 
     setFocused(false);
-    setValidationResultShown(props.isValid != null);
   };
 
   return (
     <label
       className={classNames(styles.inputFocuser, {
         [styles.focused]: isFocused,
-        [styles.error]: isValidationResultShown && !props.isValid,
+        [styles.error]: props.isValidationResultShown && !props.isValid,
         [styles.withIcon]: props.icon,
       })}
     >
       <div className={styles.inputPart}>
         <div className={styles.inputLabelsWrapper}>
           <div className={styles.inputLabel}>{props.label}</div>
-          <div className={classNames(styles.inputError, { [styles.shown]: isValidationResultShown && !props.isValid })}>
-            {isValidationResultShown && !props.isValid && props.errorMessage}
+          <div
+            className={classNames(styles.inputError, {
+              [styles.shown]: props.isValidationResultShown && !props.isValid,
+            })}
+          >
+            {props.isValidationResultShown && !props.isValid && props.errorMessage}
           </div>
         </div>
 
@@ -74,7 +75,7 @@ export const Input = (props: Props) => {
         />
       </div>
 
-      {isValidationResultShown && props.isValid && (
+      {props.isValidationResultShown && props.isValid && (
         <div className={styles.validationIcon}>
           <AiOutlineCheck size={18} />
         </div>

@@ -6,11 +6,14 @@ import classNames from 'classnames';
 
 type Props = {
   value: string;
+  name: string;
   label: string;
   placeholder?: string;
   isValid?: boolean;
   errorMessage?: string;
-  onChange: (value: string) => void;
+  isValidationResultShown?: boolean;
+  onChange: (value: string, isFocused: boolean) => void;
+  onBlur?: () => void;
 };
 
 export const InputPassword = (props: Props) => {
@@ -21,16 +24,19 @@ export const InputPassword = (props: Props) => {
       type={isPasswordShown ? 'text' : 'password'}
       label={props.label}
       value={props.value}
+      name={props.name}
       onChange={props.onChange}
       placeholder={props.placeholder}
       isValid={props.isValid}
       errorMessage={props.errorMessage}
+      isValidationResultShown={props.isValidationResultShown}
       icon={
         <div className={classNames(styles.showPasswordIcon, { [styles.shown]: isPasswordShown })}>
           {isPasswordShown ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
         </div>
       }
       onIconClick={() => setPasswordShown(!isPasswordShown)}
+      onBlur={props.onBlur}
     />
   );
 };

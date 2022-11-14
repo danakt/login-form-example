@@ -1,4 +1,4 @@
-import { InputValidator } from '../types/form';
+import { InputValidator } from './validateField';
 
 export const validatorRequiredField: InputValidator = {
   validate: (value: string) => value.length > 0,
@@ -10,12 +10,12 @@ export const validatorPasswordConfirmation = (compareValue: string): InputValida
   errorMessage: 'Passwords are not equal',
 });
 
-export const validatorLatinLetters = {
+export const validatorLatinLetters: InputValidator = {
   validate: (value: string) => /^[A-z]+$/.test(value),
   errorMessage: 'Only latin letters',
 };
 
-export const validatorEmail = {
+export const validatorEmail: InputValidator = {
   validate: (email: string) => {
     return /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(
       email.toLowerCase()

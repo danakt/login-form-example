@@ -5,8 +5,10 @@ import { BsCheckLg } from 'react-icons/bs';
 
 type Props = {
   text: ReactNode;
+  name: string;
   isChecked: boolean;
   onChange: (isChecked: boolean) => void;
+  onBlur?: () => void;
 };
 
 export const Checkbox = (props: Props) => {
@@ -16,7 +18,14 @@ export const Checkbox = (props: Props) => {
 
   return (
     <label className={styles.wrapper}>
-      <input className={styles.realCheckbox} type="checkbox" checked={props.isChecked} onChange={handleChange} />
+      <input
+        className={styles.realCheckbox}
+        name={props.name}
+        type="checkbox"
+        checked={props.isChecked}
+        onChange={handleChange}
+        onBlur={props.onBlur}
+      />
 
       <div className={styles.displayedCheckbox}>
         {props.isChecked && (

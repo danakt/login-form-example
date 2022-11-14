@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { FormItem, FormLayout, FormData } from '../../types/form';
-import { validateField } from '../../utils/validateField';
+import { FieldValidationResult, validateFieldValue } from '../../utils/validateField';
 import { validatorPasswordConfirmation, validatorRequiredField } from '../../utils/validators';
 import { Button } from '../Button/Button';
 import { Checkbox } from '../Checkbox/Checkbox';
@@ -8,32 +8,53 @@ import { Input } from '../Input/Input';
 import { InputPassword } from '../InputPassword/InputPassword';
 import styles from './styles.css';
 
+const getDuplicates = (itemsList: FormItem<string>[]) => {
+  const names: string[] = [];
+  const duplicates: string[] = [];
+
+  for (const item of itemsList) {
+    if (!('name' in item)) {
+      continue;
+    }
+
+    if (names.includes(item.name)) {
+      duplicates.push(item.name);
+    }
+
+    names.push(item.name);
+  }
+
+  return duplicates;
+};
+
 type Props<Layout extends FormLayout<string>> = {
   itemsLayout: Layout;
+  /**
+   * This flag prevents submitting data while data is
+   * not valid yet and enables fields validation on change
+   */
+  isValidationOnChangeEnabled?: boolean;
   onSubmit?: (formData: FormData<Layout>) => void;
 };
 
 export const Form = function <Name extends string, Layout extends FormLayout<Name>>(props: Props<Layout>) {
+  const itemsList = useMemo<FormItem<Name>[]>(() => props.itemsLayout.flat(), [props.itemsLayout]);
+
   // Checking for items duplicates
   useEffect(() => {
-    const names: Name[] = [];
+    const duplicates = getDuplicates(itemsList);
 
-    for (const item of props.itemsLayout.flat()) {
-      if (!('name' in item)) {
-        continue;
-      }
-
-      if (names.includes(item.name)) {
-        throw new Error(`Duplicate names in form items: "${item.name}"`);
-      }
-
-      names.push(item.name);
+    if (duplicates.length > 0) {
+      throw new Error(`Duplicate names in form items: ${duplicates.join(', ')}`);
     }
-  }, [props.itemsLayout]);
+  }, [itemsList]);
+
+  // List of item names with shown validation result
+  const [shownValidationResults, setShownValidationResults] = useState<Name[]>([]);
 
   // Form values
-  const [formState, setFormState] = useState(() => {
-    return props.itemsLayout.flat().reduce((acc, item) => {
+  const [valuesMap, setValuesMap] = useState(() => {
+    return itemsList.reduce((acc, item) => {
       if (!('name' in item)) {
         return acc;
       }
@@ -45,149 +66,192 @@ export const Form = function <Name extends string, Layout extends FormLayout<Nam
         };
       }
 
-      return {
-        ...acc,
-        [item.name]: 'defaultValue' in item ? item.defaultValue : '',
-      };
+      if (item.type === 'text' || item.type === 'password' || item.type === 'password-confirmation') {
+        return {
+          ...acc,
+          [item.name]: 'defaultValue' in item ? item.defaultValue : '',
+        };
+      }
+
+      return acc;
     }, {} as FormData<Layout>);
   });
 
   // Validation results
-  const [validationState, setValidationState] = useState(() => {
-    return props.itemsLayout.flat().reduce((acc, item) => {
+  const validationResultMap = useMemo<Record<Name, FieldValidationResult>>(() => {
+    return itemsList.reduce((acc, item) => {
       if (!('name' in item)) {
         return acc;
       }
 
-      if (item.type === 'checkbox') {
+      const value = valuesMap[item.name];
+
+      if (typeof value === 'boolean' && item.type === 'checkbox') {
         return {
           ...acc,
-          [item.name]: !item.isRequired || !item.isDefaultChecked,
+          [item.name]: {
+            isValid: !item.isRequired || valuesMap[item.name],
+          },
         };
       }
 
-      const defaultValue = 'defaultValue' in item && item.defaultValue ? item.defaultValue : '';
-      const validators = [
-        ...(item.isRequired ? [validatorRequiredField] : []),
-        ...('validators' in item && item.validators ? item.validators : []),
-      ];
+      if (
+        typeof value === 'string' &&
+        (item.type === 'text' || item.type === 'password' || item.type === 'password-confirmation')
+      ) {
+        const confirmationTarget =
+          item.type === 'password-confirmation' && typeof valuesMap[item.for] === 'string'
+            ? (valuesMap[item.for] as string)
+            : null;
 
-      const errorMessage = validateField(defaultValue, validators);
+        const validators = [
+          ...(item.isRequired ? [validatorRequiredField] : []),
+          ...(confirmationTarget ? [validatorPasswordConfirmation(confirmationTarget)] : []),
+          ...(item.validators ? item.validators : []),
+        ];
 
-      return {
-        ...acc,
-        [item.name]: {
-          isValid: errorMessage == null,
-          errorMessage,
-        },
-      };
-    }, {} as Record<Name, { isValid: boolean; errorMessage?: string }>);
-  });
+        const validationResult = validateFieldValue(value, validators);
+
+        return {
+          ...acc,
+          [item.name]: validationResult,
+        };
+      }
+
+      return acc;
+    }, {} as Record<Name, FieldValidationResult>);
+  }, [itemsList, valuesMap]);
 
   const isFormFilledValid = useMemo(() => {
-    for (const item of props.itemsLayout.flat()) {
+    for (const item of itemsList) {
       if (!('name' in item)) {
         continue;
       }
 
-      if (!validationState[item.name].isValid) {
-        return;
+      if (!validationResultMap[item.name].isValid) {
+        return false;
       }
     }
 
     return true;
-  }, [props.itemsLayout, validationState]);
+  }, [itemsList, validationResultMap]);
+
+  const showValidationResult = (name: Name, isShown: boolean) => {
+    setShownValidationResults((prevState) =>
+      isShown
+        ? [...prevState, name].filter((item, i, arr) => arr.indexOf(item) === i)
+        : prevState.filter((item) => item !== name)
+    );
+  };
+
+  const handleShowValidation = (name: Name) => {
+    if (!props.isValidationOnChangeEnabled) {
+      return;
+    }
+
+    const { isValid } = validationResultMap[name];
+
+    showValidationResult(name, isValid != null);
+  };
+
+  const handleInputChange = (value: string, item: FormItem<Name>): FieldValidationResult | undefined => {
+    if (!('name' in item)) {
+      return;
+    }
+
+    setValuesMap((state) => ({
+      ...state,
+      [item.name]: value,
+    }));
+
+    showValidationResult(item.name, false);
+  };
 
   const handleSubmit = () => {
-    if (props.onSubmit) {
-      props.onSubmit(formState);
+    if (!props.isValidationOnChangeEnabled) {
+      setShownValidationResults(
+        itemsList.reduce((acc, item) => ('name' in item ? [...acc, item.name] : acc), [] as Name[])
+      );
+    }
+
+    if (props.onSubmit && isFormFilledValid) {
+      props.onSubmit(valuesMap);
     }
   };
 
   const resolveFormItem = (item: FormItem<Name>) => {
     switch (item.type) {
       case 'text': {
-        const value = formState[item.name] as string;
-        const { isValid, errorMessage } = validationState[item.name];
+        const value = valuesMap[item.name] as string;
+        const { isValid, errorMessage } = validationResultMap[item.name];
 
         return (
           <Input
             value={value}
+            name={item.name}
             label={item.label}
+            isValidationResultShown={
+              props.isValidationOnChangeEnabled
+                ? shownValidationResults.includes(item.name)
+                : shownValidationResults.includes(item.name) && !isValid
+            }
             isValid={isValid}
             errorMessage={errorMessage}
-            onChange={(value) => {
-              setFormState((state) => ({ ...state, [item.name]: value }));
+            onChange={(value, isFocused) => {
+              handleInputChange(value, item);
 
-              if (item.isRequired || item.validators) {
-                const errorMessage = validateField(value, [
-                  ...(item.isRequired ? [validatorRequiredField] : []),
-                  ...(item.validators ?? []),
-                ]);
-
-                setValidationState((state) => ({
-                  ...state,
-                  [item.name]: {
-                    isValid: errorMessage == null,
-                    errorMessage,
-                  },
-                }));
+              if (!isFocused) {
+                handleShowValidation(item.name);
               }
             }}
+            onBlur={() => handleShowValidation(item.name)}
           />
         );
       }
 
       case 'password':
       case 'password-confirmation': {
-        const value = formState[item.name] as string;
-        const { isValid, errorMessage } = validationState[item.name];
+        const value = valuesMap[item.name] as string;
+        const { isValid, errorMessage } = validationResultMap[item.name];
 
         return (
           <InputPassword
+            name={item.name}
             value={value}
             label={item.label}
-            isValid={isValid && undefined}
+            isValidationResultShown={
+              item.type === 'password'
+                ? shownValidationResults.includes(item.name) && !isValid
+                : shownValidationResults.includes(item.name)
+            }
+            isValid={isValid}
             errorMessage={errorMessage}
-            onChange={(value) => {
-              setFormState((state) => ({ ...state, [item.name]: value }));
+            onChange={(value, isFocused) => {
+              handleInputChange(value, item);
 
-              if (item.isRequired || item.type === 'password-confirmation') {
-                const confirmationTarget =
-                  item.type === 'password-confirmation' && typeof formState[item.for] === 'string'
-                    ? (formState[item.for] as string)
-                    : null;
-
-                const errorMessage = validateField(value, [
-                  ...(item.isRequired ? [validatorRequiredField] : []),
-                  ...(confirmationTarget ? [validatorPasswordConfirmation(confirmationTarget)] : []),
-                ]);
-
-                return setValidationState((state) => ({
-                  ...state,
-                  [item.name]: {
-                    isValid: errorMessage == null,
-                    errorMessage,
-                  },
-                }));
+              if (!isFocused) {
+                handleShowValidation(item.name);
               }
             }}
+            onBlur={() => handleShowValidation(item.name)}
           />
         );
       }
 
       case 'checkbox': {
-        const isChecked = formState[item.name] as boolean;
+        const isChecked = valuesMap[item.name] as boolean;
+        const { isValid } = validationResultMap[item.name];
 
         return (
           <Checkbox
             text={item.text}
+            name={item.name}
             isChecked={isChecked}
             onChange={(isChecked) => {
-              setFormState((state) => ({ ...state, [item.name]: isChecked }));
+              setValuesMap((state) => ({ ...state, [item.name]: isChecked }));
 
-              if (item.isRequired) {
-                setValidationState((state) => ({ ...state, [item.name]: { isValid: isChecked } }));
+              if (props.isValidationOnChangeEnabled) {
+                showValidationResult(item.name, isValid != null);
               }
             }}
           />
@@ -204,7 +268,11 @@ export const Form = function <Name extends string, Layout extends FormLayout<Nam
 
       case 'submit': {
         return (
-          <Button type="primary" onClick={handleSubmit} isDisabled={!isFormFilledValid}>
+          <Button
+            type="primary"
+            onClick={handleSubmit}
+            isDisabled={props.isValidationOnChangeEnabled && !isFormFilledValid}
+          >
             {item.text}
           </Button>
         );
