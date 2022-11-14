@@ -6,5 +6,5 @@ type Props = PropsWithChildren<{
 }>;
 
 export const PageDescription = (props: Props) => {
-  return <h2 className={styles.pageDescription}>{props.children}</h2>;
+  return <span className={styles.pageDescription}>{props.children}</span>;
 };
