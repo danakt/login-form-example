@@ -72,7 +72,6 @@ export const Input = (props: Props) => {
           onFocus={handleFocus}
           onBlur={handleBlur}
           placeholder={props.placeholder}
-          autoComplete={type === 'password' ? 'new-password' : 'off'}
         />
       </div>
 
