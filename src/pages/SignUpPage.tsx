@@ -38,7 +38,7 @@ export const SignUpPage = () => {
             },
           ],
           {
-            type: 'text',
+            type: 'email',
             name: 'email',
             label: 'Email',
             isRequired: true,

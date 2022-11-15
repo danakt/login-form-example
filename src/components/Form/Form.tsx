@@ -66,7 +66,12 @@ export const Form = function <Name extends string, Layout extends FormLayout<Nam
         };
       }
 
-      if (item.type === 'text' || item.type === 'password' || item.type === 'password-confirmation') {
+      if (
+        item.type === 'text' ||
+        item.type === 'email' ||
+        item.type === 'password' ||
+        item.type === 'password-confirmation'
+      ) {
         return {
           ...acc,
           [item.name]: 'defaultValue' in item ? item.defaultValue : '',
@@ -97,7 +102,10 @@ export const Form = function <Name extends string, Layout extends FormLayout<Nam
 
       if (
         typeof value === 'string' &&
-        (item.type === 'text' || item.type === 'password' || item.type === 'password-confirmation')
+        (item.type === 'text' ||
+          item.type === 'email' ||
+          item.type === 'password' ||
+          item.type === 'password-confirmation')
       ) {
         const confirmationTarget =
           item.type === 'password-confirmation' && typeof valuesMap[item.for] === 'string'
@@ -181,12 +189,14 @@ export const Form = function <Name extends string, Layout extends FormLayout<Nam
 
   const resolveFormItem = (item: FormItem<Name>) => {
     switch (item.type) {
+      case 'email':
       case 'text': {
         const value = valuesMap[item.name] as string;
         const { isValid, errorMessage } = validationResultMap[item.name];
 
         return (
           <Input
+            type={item.type}
             value={value}
             name={item.name}
             label={item.label}

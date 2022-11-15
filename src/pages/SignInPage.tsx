@@ -21,7 +21,7 @@ export const SignInPage = () => {
       <Form
         itemsLayout={[
           {
-            type: 'text',
+            type: 'email',
             name: 'email',
             label: 'Email',
             isRequired: true,

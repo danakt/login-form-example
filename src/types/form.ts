@@ -3,7 +3,7 @@ import { InputValidator } from '../utils/validateField';
 import { JoinObjectsIntersection, UnionToIntersection } from './utils';
 
 export type FormItemInput<Name> = {
-  type: 'text';
+  type: 'text' | 'email';
   name: Name;
   label: string;
   defaultValue?: string;
